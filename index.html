@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>1 mês - Israel &amp; Meu Amor</title>
+  <style>
+    :root{ --accent:#761ceb; --bg:#ffffff; --text:#111; }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+
+    /* Header fixo */
+    header{ position:fixed; left:0; right:0; top:0; height:64px; display:flex; align-items:center; justify-content:center; background:linear-gradient(0deg, rgba(118,28,235,0.03), rgba(118,28,235,0.02)); backdrop-filter: blur(6px); z-index:40; box-shadow: 0 1px 0 rgba(0,0,0,0.04); }
+    .heart{ width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:999px; background:var(--accent); color:white; font-size:24px; box-shadow: 0 6px 18px rgba(118,28,235,0.18); transform: translateY(0); }
+
+    main{ padding:84px 16px 32px; max-width:900px; margin:0 auto; }
+    .section-text{ font-size:20px; line-height:1.3; text-align:center; margin:18px 0; color:var(--accent); font-weight:600; }
+
+    img.full{ width:100%; height:auto; display:block; border-radius:14px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); margin:0; }
+
+    /* Modal full-screen */
+    .modal{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(118,28,235,0.08), rgba(255,255,255,0.0)); display:flex; align-items:center; justify-content:center; z-index:100; }
+    .modal-inner{ width:92vw; max-width:420px; height:92vw; max-height:420px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex-direction:column; background:linear-gradient(135deg, rgba(118,28,235,0.18), rgba(118,28,235,0.35)); box-shadow: 0 30px 60px rgba(118,28,235,0.15); }
+    .modal-heart{ font-size:64px; margin-bottom:8px; color:white; }
+    .modal-text{ color:white; font-weight:700; letter-spacing:0.6px; margin-top:6px; }
+    .hint{ font-size:14px; opacity:0.95; margin-top:6px }
+
+    /* small instruction under modal */
+    .tap-area{ position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; pointer-events:none; }
+    .tap-area .hint{ pointer-events:auto; margin-bottom:28px; background:rgba(255,255,255,0.06); padding:8px 14px; border-radius:999px }
+
+    /* Responsive text sizes */
+    @media (max-width:420px){ .section-text{ font-size:18px } .modal-inner{ width:86vw; height:86vw } .modal-heart{ font-size:56px } }
+
+    /* subtle entrance animation */
+    .fade-in{ animation:fadeIn .8s ease both }
+    @keyframes fadeIn{ from {opacity:0; transform:translateY(8px)} to {opacity:1; transform:none} }
+
+    .hide{ opacity:0; pointer-events:none; transform:scale(0.98); transition: all .45s cubic-bezier(.2,.9,.2,1); }
+
+    footer{ text-align:center; color:#666; font-size:13px; margin-top:28px }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="heart" aria-hidden="true">❤</div>
+  </header>
+
+  <main>
+    <!-- Modal overlay (inicia visível) -->
+    <div id="startModal" class="modal">
+      <div class="modal-inner fade-in" role="button" aria-label="Toque para iniciar" id="modalInner">
+        <div class="modal-heart">❤</div>
+        <div class="modal-text">Toque para iniciar</div>
+        <div class="hint" style="font-size:13px;margin-top:8px;opacity:0.95">Toque uma vez — música e surpresa irão começar</div>
+      </div>
+      <div class="tap-area"><div class="hint">Se estiver no celular, toque na tela</div></div>
+    </div>
+
+    <!-- audio (invisível) -->
+    <audio id="bgAudio" preload="auto">
+      <source src="https://cdn.jumpshare.com/preview/WRncQgADTZak-6LJcpJ3Oqz-UkEy2yQ5V387VTsSt1ErAcw9lJeA3cCJVvV4s7sBotZ8xKM8iBHtzoGKEnm0DSX2UL3mpWWYjjS3MG4J34fIZ_IXcFxrETjaKKdhfeR_MFPPOfqd4fFwL9ZwOwp93G6yjbN-I2pg_cnoHs_AmgI.mp3" type="audio/mpeg">
+      Seu navegador não suporta áudio.
+    </audio>
+
+    <!-- Conteúdo: textos e fotos -->
+    <div class="section-text">Meu amor...</div>
+    <img class="full" src="https://i.ibb.co/KxBm6Ycs/Whats-App-Image-2026-01-21-at-8-28-53-PM.jpg" alt="Foto 1">
+
+    <div class="section-text">Obrigado por tornar</div>
+    <img class="full" src="https://i.ibb.co/4nzd6CT8/Whats-App-Image-2026-01-21-at-8-24-42-PM.jpg" alt="Foto 2">
+
+    <div class="section-text">A minha vida mais feliz</div>
+    <img class="full" src="https://i.ibb.co/yn1d9300/Whats-App-Image-2026-01-21-at-8-30-45-PM.jpg" alt="Foto 3">
+
+    <div class="section-text">Feliz um mês pra nós, de muitos mais que virão 🥳</div>
+    <img class="full" src="https://i.ibb.co/8nrKmLb6/Whats-App-Image-2026-01-21-at-8-30-45-PM-1.jpg" alt="Foto 4">
+
+    <div class="section-text">Eu te amo</div>
+    <img class="full" src="https://i.ibb.co/jvhxDbLD/Whats-App-Image-2026-01-21-at-8-23-02-PM.jpg" alt="Foto 5">
+
+    <div class="section-text">Com muuuuito amor, Israel &lt;3</div>
+    <img class="full" src="https://i.ibb.co/27ByFm3X/Whats-App-Image-2026-01-21-at-8-20-41-PM.jpg" alt="Foto 6">
+
+    <footer>Um mês juntos — e muitos mais por vir ✨</footer>
+  </main>
+
+  <script>
+    (function(){
+      const modal = document.getElementById('startModal');
+      const modalInner = document.getElementById('modalInner');
+      const audio = document.getElementById('bgAudio');
+
+      // lock scroll while modal visible
+      const lock = ()=> document.documentElement.style.overflow = 'hidden';
+      const unlock = ()=> document.documentElement.style.overflow = '';
+      lock();
+
+      function startExperience(e){
+        // prevent double triggers
+        modalInner.removeEventListener('click', startExperience);
+        modalInner.removeEventListener('touchstart', startExperience);
+
+        // try to seek to 58s when metadata is available
+        function playFrom58(){
+          try{
+            if (audio.duration && audio.duration > 58){
+              audio.currentTime = 58;
+            }
+          }catch(err){
+            // ignore seek errors
+          }
+          const p = audio.play();
+          if (p && p.catch){ p.catch(()=>{/* play rejected; user gesture already done though */}); }
+        }
+
+        // If metadata already loaded, seek and play. Otherwise wait for loadedmetadata.
+        if (audio.readyState >= 1){
+          playFrom58();
+        } else {
+          audio.addEventListener('loadedmetadata', playFrom58, { once:true });
+          // also try to load and then play
+          audio.load();
+        }
+
+        // hide modal with animation
+        modal.classList.add('hide');
+        setTimeout(()=>{ modal.style.display='none'; unlock(); }, 600);
+      }
+
+      modalInner.addEventListener('click', startExperience);
+      modalInner.addEventListener('touchstart', startExperience);
+
+      // small accessibility: allow Enter/Space to start when focused
+      modalInner.addEventListener('keydown', (ev)=>{ if(ev.key==="Enter"||ev.key===" ") startExperience(); });
+
+      // allow tapping anywhere on modal area too
+      modal.addEventListener('click', function(ev){ if(ev.target===modal) modalInner.click(); });
+
+    })();
+  </script>
+</body>
+</html>
