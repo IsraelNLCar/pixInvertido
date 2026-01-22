@@ -19,7 +19,7 @@
 
     /* Modal full-screen */
     .modal{ position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:100; }
-    .modal-inner{ width:92vw; max-width:420px; height:92vw; max-height:420px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex-direction:column; background:linear-gradient(135deg, rgba(118,28,235,0.18), rgba(118,28,235,0.35)); box-shadow: 0 30px 60px rgba(118,28,235,0.15); }
+    .modal-inner{ width:92vw; max-width:420px; height:92vw; max-height:420px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex-direction:column; background:linear-gradient(135deg, rgba(118,28,235,0.18), rgba(118,28,235,0.35)); box-shadow: 0 30px 60px rgba(118,28,235,0.15); cursor:pointer; }
     .modal-heart{ font-size:64px; margin-bottom:8px; color:white; }
     .modal-text{ color:white; font-weight:700; letter-spacing:0.6px; margin-top:6px; }
     .hint{ font-size:14px; opacity:0.95; margin-top:6px }
@@ -48,7 +48,7 @@
   <main>
     <!-- Modal overlay (inicia visível) -->
     <div id="startModal" class="modal">
-      <div class="modal-inner fade-in" role="button" aria-label="Toque para iniciar" id="modalInner">
+      <div class="modal-inner fade-in" role="button" aria-label="Toque para iniciar" id="modalInner" tabindex="0">
         <div class="modal-heart">❤</div>
         <div class="modal-text">Toque para iniciar</div>
         <div class="hint" style="font-size:13px;margin-top:8px;opacity:0.95;color:#fff">(e aumente o volume)</div>
@@ -57,7 +57,7 @@
     </div>
 
     <!-- audio (invisível) -->
-    <audio id="bgAudio" preload="auto">
+    <audio id="bgAudio" preload="auto" playsinline webkit-playsinline>
       <source src="https://cdn.jumpshare.com/preview/WRncQgADTZak-6LJcpJ3Oqz-UkEy2yQ5V387VTsSt1ErAcw9lJeA3cCJVvV4s7sBotZ8xKM8iBHtzoGKEnm0DSX2UL3mpWWYjjS3MG4J34fIZ_IXcFxrETjaKKdhfeR_MFPPOfqd4fFwL9ZwOwp93G6yjbN-I2pg_cnoHs_AmgI.mp3" type="audio/mpeg">
       Seu navegador não suporta áudio.
     </audio>
@@ -97,31 +97,53 @@
       const unlock = ()=> document.documentElement.style.overflow = '';
       lock();
 
-      function startExperience(e){
+      async function startExperience(e){
         // prevent double triggers
         modalInner.removeEventListener('click', startExperience);
         modalInner.removeEventListener('touchstart', startExperience);
+        modalInner.removeEventListener('touchend', startExperience);
 
-        // try to seek to 58s when metadata is available
-        function playFrom58(){
-          try{
-            if (audio.duration && audio.duration > 58){
-              audio.currentTime = 58;
-            }
-          }catch(err){
-            // ignore seek errors
+        if(e && e.preventDefault) e.preventDefault();
+
+        // Try to ensure audio will play on mobile:
+        // 1) Pause first (to make sure we can set currentTime)
+        // 2) Try to set currentTime to 58 (may throw on some browsers; catch)
+        // 3) Try to play; on rejection, try muted-play fallback
+        try {
+          audio.pause();
+        } catch(err) { /* ignore */ }
+
+        try {
+          // attempt to set start position (in user gesture)
+          if (typeof audio.duration === 'number' && audio.duration > 58) {
+            audio.currentTime = 58;
+          } else {
+            // still try (some browsers allow seeking even if duration isn't known)
+            audio.currentTime = 58;
           }
-          const p = audio.play();
-          if (p && p.catch){ p.catch(()=>{/* play rejected; user gesture already done though */}); }
+        } catch (seekErr) {
+          // ignore seek errors (some browsers block it), we'll try play and then set currentTime
+          try { audio.currentTime = 58; } catch(_) {}
         }
 
-        // If metadata already loaded, seek and play. Otherwise wait for loadedmetadata.
-        if (audio.readyState >= 1){
-          playFrom58();
-        } else {
-          audio.addEventListener('loadedmetadata', playFrom58, { once:true });
-          // also try to load and then play
-          audio.load();
+        // Attempt to play (first try normal)
+        try {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+          }
+        } catch (playErr) {
+          // If play is rejected, try muted play as fallback (some browsers only allow muted autoplay)
+          try {
+            audio.muted = true;
+            const playPromise2 = audio.play();
+            if (playPromise2 !== undefined) await playPromise2;
+            // unmute after a short delay so user still hears it (if supported)
+            setTimeout(()=>{ try{ audio.muted = false; }catch(_){} }, 300);
+          } catch (mutedErr) {
+            // final fallback: ignore — audio couldn't start
+            console.warn('Não foi possível iniciar o áudio automaticamente:', mutedErr);
+          }
         }
 
         // hide modal with animation
@@ -129,14 +151,17 @@
         setTimeout(()=>{ modal.style.display='none'; unlock(); }, 600);
       }
 
+      // Attach event listeners (click, touchstart, touchend for mobile)
       modalInner.addEventListener('click', startExperience);
       modalInner.addEventListener('touchstart', startExperience);
+      modalInner.addEventListener('touchend', startExperience);
 
       // small accessibility: allow Enter/Space to start when focused
-      modalInner.addEventListener('keydown', (ev)=>{ if(ev.key==="Enter"||ev.key===" ") startExperience(); });
+      modalInner.addEventListener('keydown', (ev)=>{ if(ev.key==="Enter"||ev.key===" ") startExperience(ev); });
 
       // allow tapping anywhere on modal area too
       modal.addEventListener('click', function(ev){ if(ev.target===modal) modalInner.click(); });
+      modal.addEventListener('touchstart', function(ev){ if(ev.target===modal) modalInner.dispatchEvent(new Event('touchstart',{bubbles:true})); });
 
     })();
   </script>
